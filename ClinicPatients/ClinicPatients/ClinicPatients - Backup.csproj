@@ -5,14 +5,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	  
-	  <RootNamespace>NicolasEmpresa.ClinicPatients</RootNamespace>
+	  <RootNamespace>LNAT.WebApiSP</RootNamespace>NicolasEmpresaCñlinicPatients
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
-	 
+	 <ItemGroup>
+    <ProjectReference Include="..\businesslogic\businesslogic.csproj" />
+  </ItemGroup>	<ItemGroup>
+		<ProjectReference Include="..\businesslogic\businesslogic.csproj" />
+	BusinessLogicBusinessLogic
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
   </ItemGroup>
