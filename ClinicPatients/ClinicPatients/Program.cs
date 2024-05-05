@@ -2,6 +2,13 @@ using NicolasEmpresa.BusinessLogic.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile(
+        $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json"
+    )
+    .Build();
+
 // Add services to the container.
 
 builder.Services.AddControllers();

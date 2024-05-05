@@ -1,4 +1,5 @@
-﻿using NicolasEmpresa.BusinessLogic.Models;
+﻿using Microsoft.Extensions.Configuration;
+using NicolasEmpresa.BusinessLogic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,14 @@ namespace NicolasEmpresa.BusinessLogic.Managers
     {
         private readonly string _filePath;
         private readonly string _fileLog;
+        private readonly IConfiguration _configuration;
 
         Dictionary<int, Patient> pacientes = new Dictionary<int, Patient>();
-        public PatientManager()
+        public PatientManager(IConfiguration configuration)
         {
-            _filePath = "C:\\NICO TODA MI INFORMACION 2\\UPB\\CERTIFICACION I\\PRACTICE-2-CERTI-I\\listaPacienteQA.txt";
+
+            _configuration = configuration;
+            _filePath = _configuration.GetSection("Paths").GetSection("txt").Value;
 
             ObtenerPacientesDeArchivo();
 
