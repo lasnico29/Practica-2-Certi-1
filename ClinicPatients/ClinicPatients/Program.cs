@@ -1,4 +1,6 @@
 using NicolasEmpresa.BusinessLogic.Managers;
+using NicolasEmpresa.ClinicPatients.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +20,30 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+if (app.Environment.EnvironmentName == "QA")
+{
+    Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(app.Configuration.GetSection("Paths").GetSection("FileLocation").Value, rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+    Log.Information("Inicializando el servidor con el entorno QA");
+}
+else
+{
+    Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File(app.Configuration.GetSection("Paths").GetSection("FileLocation").Value, rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+    Log.Information("Inicializando con otro entorno");
+}
 
 // Configure the HTTP request pipeline.
+app.UseExceptionHandlerMiddleware();
 if (app.Environment.EnvironmentName == "QA" || app.Environment.EnvironmentName == "UAT" || app.Environment.EnvironmentName == "Development")
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+        c.DocumentTitle = app.Configuration.GetSection("ApplicationSettings").GetSection("ApplicationName").Value
+        );
 
 }
 

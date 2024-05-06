@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using NicolasEmpresa.BusinessLogic.Managers.Exceptions;
 using NicolasEmpresa.BusinessLogic.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +21,17 @@ namespace NicolasEmpresa.BusinessLogic.Managers
         {
 
             _configuration = configuration;
-            _filePath = _configuration.GetSection("Paths").GetSection("txt").Value;
+            try
+            {
+                _filePath = _configuration.GetSection("Paths").GetSection("txt").Value;
+            }
+            catch (Exception e)
+            {
+                PatientExceptions bsEx = new PatientExceptions(e.Message);
+                Log.Error(bsEx.MensajeParaLogs("Configurando direccion"));
 
+                throw bsEx;
+            }
             ObtenerPacientesDeArchivo();
 
         }
@@ -44,30 +55,64 @@ namespace NicolasEmpresa.BusinessLogic.Managers
         }
         public void removerPaciente(int ci)
         {
+            if (pacientes.TryGetValue(ci, out Patient paciente))
+            {
+                pacientes.Remove(ci);
+                escribirPacientesEnArchivo();
+            }
+            else
+            {
+                PatientExceptions bsEx = new PatientExceptions();
+                Log.Error(bsEx.MensajeParaLogs("Remove by Ci"));
 
-            pacientes.Remove(ci);
-            escribirPacientesEnArchivo() ;
-
+                throw new Exception("error al remover CI!!!");
+            }
         }
 
         public Patient obtenerPacienteCI(int ci)
         {
-          
-            return pacientes[ci];
+            try
+            {
+                return pacientes[ci];
+            }
+            catch (Exception e)
+            {
+                PatientExceptions bsEx = new PatientExceptions(e.Message);
+                Log.Error(bsEx.MensajeParaLogs("obtenerPacienteCI"));
 
+                throw bsEx;
+            }
 
         }
         public void actualizarApellido(int ci, string apellido)
         {
-            
-            pacientes[ci].apellido = apellido;
-            escribirPacientesEnArchivo();
+            try
+            {
+                pacientes[ci].apellido = apellido;
+                escribirPacientesEnArchivo();
+            }
+            catch(Exception e)
+            {
+                PatientExceptions bsEx = new PatientExceptions(e.Message);
+                Log.Error(bsEx.MensajeParaLogs("actualizarApellido"));
+
+                throw bsEx;
+            }
         }
         public void actualizarNombre(int ci, string nombre)
         {
-            
-            pacientes[ci].nombre = nombre;
-            escribirPacientesEnArchivo();
+            try
+            {
+                pacientes[ci].nombre = nombre;
+                escribirPacientesEnArchivo();
+            }
+            catch(Exception e)
+            {
+                PatientExceptions bsEx = new PatientExceptions(e.Message);
+                Log.Error(bsEx.MensajeParaLogs("actualizarNombre"));
+
+                throw bsEx;
+            }
 
         }
         public Dictionary<int, Patient> devolverPacientes()
